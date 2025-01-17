@@ -60,7 +60,7 @@ export function RegistrationForm() {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-2xl text-center">
-          Registro para el Congreso
+          Registro
         </CardTitle>
       </CardHeader>
       <CardContent>
