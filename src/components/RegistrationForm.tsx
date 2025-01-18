@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import supabase from "@/supabase";  // Asegúrate de importar el cliente de Supabase
 
 const formSchema = z.object({
   sector: z.string().min(1, "Por favor seleccione un sector"),
@@ -42,14 +43,39 @@ export function RegistrationForm() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:", values);
-    toast({
-      title: "Registro exitoso",
-      description: `${values.name} ha sido registrado para el congreso.`,
-    });
-    form.reset();
-    setSelectedSector("");
+    try {
+      // Inserta los datos del formulario en Supabase
+      const { data, error } = await supabase
+        .from('registrations')
+        .insert([
+          {
+            name: values.name,
+            sector: Number(values.sector),
+            church: values.church
+          }
+        ]);
+
+      if (error) {
+        throw error;
+      }
+
+      toast({
+        title: "Registro exitoso",
+        description: `${values.name} ha sido registrado para el congreso.`,
+      });
+
+      form.reset();
+      setSelectedSector("");
+    } catch (error) {
+      console.error("Error inserting data:", error);
+      toast({
+        title: "Error",
+        description: "Hubo un problema al registrar los datos. Intenta nuevamente.",
+        variant: "destructive",
+      });
+    }
   };
 
   const availableChurches = churches.filter(
