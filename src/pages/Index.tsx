@@ -25,13 +25,13 @@ const Index = () => {
         </div>
       </div>
       
-      {/* Footer con logos centrados */}
-      <footer className="relative z-10 mt-12 py-6 bg-black/50 w-full flex justify-center">
+      {/* Footer con imágenes visibles y fondo transparente */}
+      <footer className="relative z-10 mt-12 py-6 bg-transparent w-full flex justify-center">
         <div className="max-w-4xl w-full flex justify-center">
           <img 
             src="/lovable-uploads/Logos_AAFCJ.png" 
             alt="Logo 1" 
-            className="h-12"
+            className="h-12 opacity-90 hover:opacity-100 transition-opacity duration-300"
           />
         </div>
       </footer>
