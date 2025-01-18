@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import supabase from "@/supabase";  // Asegúrate de importar el cliente de Supabase
+import supabase from "@/supabase"; // Asegúrate de importar el cliente de Supabase
 
 const formSchema = z.object({
   sector: z.string().min(1, "Por favor seleccione un sector"),
@@ -45,16 +45,38 @@ export function RegistrationForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     console.log("Form submitted:", values);
+
     try {
-      // Inserta los datos del formulario en Supabase
+      // Verificar si el nombre ya está registrado para la iglesia y el sector
+      const { data: existingRegistrations, error: checkError } = await supabase
+        .from("registrations")
+        .select("*")
+        .eq("church", values.church)
+        .eq("name", values.name);
+
+      if (checkError) {
+        throw checkError;
+      }
+
+      if (existingRegistrations.length > 0) {
+        // Si ya existe un registro con el mismo nombre en la iglesia seleccionada
+        toast({
+          title: "Error",
+          description: "Este nombre ya está registrado en esta iglesia.",
+          variant: "destructive",
+        });
+        return; // Evitar insertar el nuevo registro
+      }
+
+      // Si no existe, proceder con la inserción del nuevo registro
       const { data, error } = await supabase
-        .from('registrations')
+        .from("registrations")
         .insert([
           {
             name: values.name,
             sector: Number(values.sector),
-            church: values.church
-          }
+            church: values.church,
+          },
         ]);
 
       if (error) {
