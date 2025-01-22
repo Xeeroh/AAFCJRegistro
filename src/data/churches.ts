@@ -1,5 +1,5 @@
 export interface Church {
-  sector: number;
+  sector: number | string;
   name: string;
 }
 
@@ -14,7 +14,6 @@ export const churches: Church[] = [
   { sector: 1, name: "Iglesia Luz y Salvación" },
   { sector: 1, name: "Remanente de Vida" },
   { sector: 1, name: "Antioquia la Hermosa" },
-  { sector: 1, name: "Iglesia FE" },
   { sector: 1, name: "Iglesia Misión Libertad" },
   { sector: 1, name: "Tabernáculo de Adoración Familiar" },
   { sector: 1, name: "Cristo Centro de la Familia" },
@@ -62,5 +61,6 @@ export const churches: Church[] = [
   { sector: 5, name: "Templo Jerusalén" },
   { sector: 5, name: "Iglesia Visión" },
   { sector: 5, name: "Misión Bethel" },
-  { sector: 5, name: "Iglesia La Vid Verdadera" }
+  { sector: 5, name: "Iglesia La Vid Verdadera" },
+  { sector: "Extranjero", name: "Sin Iglesia Sectoral" }
 ];
