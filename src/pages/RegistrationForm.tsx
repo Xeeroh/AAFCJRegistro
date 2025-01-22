@@ -1,6 +1,6 @@
 import { RegistrationForm } from "@/components/RegistrationForm";
 
-const Index = () => {
+const Register = () => {
   return (
     <div 
       className="min-h-screen flex flex-col items-center justify-center bg-cover bg-center bg-no-repeat py-12 px-4 relative"
@@ -39,4 +39,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Register;
