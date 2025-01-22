@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import supabase from "@/supabase"; // Asegúrate de importar el cliente de Supabase
+import supabase from "@/supabase";
 
 const formSchema = z.object({
   sector: z.string().min(1, "Por favor seleccione un sector"),
@@ -47,7 +47,6 @@ export function RegistrationForm() {
     console.log("Form submitted:", values);
 
     try {
-      // Verificar si el nombre ya está registrado para la iglesia y el sector
       const { data: existingRegistrations, error: checkError } = await supabase
         .from("registrations")
         .select("*")
@@ -59,22 +58,20 @@ export function RegistrationForm() {
       }
 
       if (existingRegistrations.length > 0) {
-        // Si ya existe un registro con el mismo nombre en la iglesia seleccionada
         toast({
           title: "Error",
           description: "Este nombre ya está registrado en esta iglesia.",
           variant: "destructive",
         });
-        return; // Evitar insertar el nuevo registro
+        return;
       }
 
-      // Si no existe, proceder con la inserción del nuevo registro
       const { data, error } = await supabase
         .from("registrations")
         .insert([
           {
             name: values.name,
-            sector: Number(values.sector),
+            sector: isNaN(Number(values.sector)) ? values.sector : Number(values.sector),
             church: values.church,
           },
         ]);
@@ -101,15 +98,13 @@ export function RegistrationForm() {
   };
 
   const availableChurches = churches.filter(
-    (church) => church.sector === Number(selectedSector)
+    (church) => church.sector === (isNaN(Number(selectedSector)) ? selectedSector : Number(selectedSector))
   );
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle className="text-2xl text-center">
-          Registro
-        </CardTitle>
+        <CardTitle className="text-2xl text-center">Registro</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -134,9 +129,9 @@ export function RegistrationForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {[1, 2, 3, 4, 5].map((sector) => (
+                      {[1, 2, 3, 4, 5, "Extranjero"].map((sector) => (
                         <SelectItem key={sector} value={sector.toString()}>
-                          Sector {sector}
+                          {sector === "Extranjero" ? "Extranjero" : `Sector ${sector}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -152,11 +147,7 @@ export function RegistrationForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Iglesia</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={!selectedSector}
-                  >
+                  <Select onValueChange={field.onChange} value={field.value} disabled={!selectedSector}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccione una iglesia" />
