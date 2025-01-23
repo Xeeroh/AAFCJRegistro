@@ -20,6 +20,8 @@ const App = () => (
           
           {/* Ruta para Dashboard, sin necesidad de Layout */}
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/register" element={<Register/>} />
+          
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
