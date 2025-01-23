@@ -62,5 +62,5 @@ export const churches: Church[] = [
   { sector: 5, name: "Iglesia Visión" },
   { sector: 5, name: "Misión Bethel" },
   { sector: 5, name: "Iglesia La Vid Verdadera" },
-  { sector: "Extranjero", name: "Sin Iglesia Sectoral" }
+  { sector: "Foráneo", name: "Sin Iglesia Sectoral" }
 ];

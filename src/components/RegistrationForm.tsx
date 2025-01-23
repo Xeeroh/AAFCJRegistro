@@ -22,7 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import supabase from "@/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 const formSchema = z.object({
   sector: z.string().min(1, "Por favor seleccione un sector"),
@@ -66,12 +66,14 @@ export function RegistrationForm() {
         return;
       }
 
+      const sectorValue = Number(values.sector);
+      
       const { data, error } = await supabase
         .from("registrations")
         .insert([
           {
             name: values.name,
-            sector: isNaN(Number(values.sector)) ? values.sector : Number(values.sector),
+            sector: sectorValue,
             church: values.church,
           },
         ]);
@@ -83,6 +85,7 @@ export function RegistrationForm() {
       toast({
         title: "Registro exitoso",
         description: `${values.name} ha sido registrado para el congreso.`,
+        variant: "default",
       });
 
       form.reset();
@@ -96,6 +99,9 @@ export function RegistrationForm() {
       });
     }
   };
+
+  // Obtener los sectores únicos de las iglesias disponibles
+  const uniqueSectors = Array.from(new Set(churches.map((church) => church.sector)));
 
   const availableChurches = churches.filter(
     (church) => church.sector === (isNaN(Number(selectedSector)) ? selectedSector : Number(selectedSector))
@@ -129,7 +135,7 @@ export function RegistrationForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {[1, 2, 3, 4, 5, "Extranjero"].map((sector) => (
+                      {uniqueSectors.map((sector) => (
                         <SelectItem key={sector} value={sector.toString()}>
                           {sector === "Extranjero" ? "Extranjero" : `Sector ${sector}`}
                         </SelectItem>
