@@ -22,7 +22,7 @@ export type Database = {
           created_at?: string | null
           id?: number
           name: string
-          sector: number
+          sector: number | string
         }
         Update: {
           church?: string

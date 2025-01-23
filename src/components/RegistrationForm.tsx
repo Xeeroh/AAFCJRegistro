@@ -47,6 +47,9 @@ export function RegistrationForm() {
     console.log("Form submitted:", values);
 
     try {
+      // Verificar si el sector es un número. Si no lo es, asignar "Foráneo"
+      const sectorToRegister = isNaN(Number(values.sector)) ? "Foráneo" : values.sector;
+
       const { data: existingRegistrations, error: checkError } = await supabase
         .from("registrations")
         .select("*")
@@ -66,14 +69,12 @@ export function RegistrationForm() {
         return;
       }
 
-      const sectorValue = Number(values.sector);
-      
       const { data, error } = await supabase
         .from("registrations")
         .insert([
           {
             name: values.name,
-            sector: sectorValue,
+            sector: sectorToRegister, // Aquí usamos el valor modificado
             church: values.church,
           },
         ]);
@@ -137,7 +138,7 @@ export function RegistrationForm() {
                     <SelectContent>
                       {uniqueSectors.map((sector) => (
                         <SelectItem key={sector} value={sector.toString()}>
-                          {sector === "Extranjero" ? "Extranjero" : `Sector ${sector}`}
+                          {sector === "Foráneo" ? "Foráneo" : `Sector ${sector}`}
                         </SelectItem>
                       ))}
                     </SelectContent>
