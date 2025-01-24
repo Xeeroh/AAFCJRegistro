@@ -14,15 +14,26 @@ interface DashboardStatsProps {
 }
 
 export const DashboardStats = ({ data }: DashboardStatsProps) => {
-  // Calcular estadísticas
   const totalRegistrations = data.length;
-  const uniqueChurches = new Set(data.map(r => r.church)).size;
-  const uniqueSectors = new Set(data.map(r => r.sector)).size;
-  
-  // Registros del último mes
+  const uniqueChurches = new Set(data.map((r) => r.church)).size;
+  const uniqueSectors = new Set(data.map((r) => r.sector)).size;
+
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
-  const recentRegistrations = data.filter(r => new Date(r.created_at) > lastMonth).length;
+
+  const recentRegistrations = data.filter((r) => new Date(r.created_at) > lastMonth).length;
+  const registrationsToday = data.filter((r) => new Date(r.created_at) >= today).length;
+  const registrationsYesterday = data.filter((r) => {
+    const date = new Date(r.created_at);
+    return date >= yesterday && date < today;
+  }).length;
+
+  const formatDate = (date: Date) => date.toLocaleDateString("es-ES", { year: "numeric", month: "long", day: "numeric" });
 
   const stats = [
     {
@@ -44,8 +55,14 @@ export const DashboardStats = ({ data }: DashboardStatsProps) => {
       color: "text-purple-600",
     },
     {
-      title: "Último Mes",
-      value: recentRegistrations,
+      title: `Hoy (${formatDate(today)})`,
+      value: registrationsToday,
+      icon: CalendarClock,
+      color: "text-green-600",
+    },
+    {
+      title: `Ayer (${formatDate(yesterday)})`,
+      value: registrationsYesterday,
       icon: CalendarClock,
       color: "text-green-600",
     },
