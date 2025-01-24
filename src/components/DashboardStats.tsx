@@ -21,7 +21,10 @@ export const DashboardStats = ({ data }: DashboardStatsProps) => {
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const yesterday = new Date(today);
+  const dbfyesterday = new Date(today);
   yesterday.setDate(today.getDate() - 1);
+  dbfyesterday.setDate(today.getDate() - 2);
+
 
   const lastMonth = new Date();
   lastMonth.setMonth(lastMonth.getMonth() - 1);
@@ -66,7 +69,17 @@ export const DashboardStats = ({ data }: DashboardStatsProps) => {
       icon: CalendarClock,
       color: "text-green-600",
     },
+    {
+      title: `Antier (${formatDate(dbfyesterday)})`,
+      value: data.filter((r) => {
+        const date = new Date(r.created_at);
+        return date >= dbfyesterday && date < yesterday;
+      }).length,
+      icon: CalendarClock,
+      color: "text-green-600",
+    },
   ];
+  
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
