@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { BarChart, Bar, PieChart, Pie, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
 interface Registration {
   id: number;
@@ -14,7 +15,8 @@ interface RegistrationChartsProps {
 }
 
 export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
-  // Preparar datos para gráfica de sectores
+  const [selectedSector, setSelectedSector] = useState<number | null>(null);
+
   const sectorData = Array.from(
     data.reduce((acc, curr) => {
       acc.set(curr.sector, (acc.get(curr.sector) || 0) + 1);
@@ -23,7 +25,6 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
     ([sector, count]) => ({ sector, count })
   );
 
-  // Preparar datos para gráfica de iglesias
   const churchData = Array.from(
     data.reduce((acc, curr) => {
       acc.set(curr.church, (acc.get(curr.church) || 0) + 1);
@@ -32,7 +33,15 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
     ([name, value]) => ({ name, value })
   );
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+  const churchSectorData = data.reduce((acc, curr) => {
+    if (!acc[curr.sector]) {
+      acc[curr.sector] = {};
+    }
+    acc[curr.sector][curr.church] = (acc[curr.sector][curr.church] || 0) + 1;
+    return acc;
+  }, {} as Record<number, Record<string, number>>);
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
   return (
     <>
@@ -45,7 +54,7 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
               <XAxis dataKey="sector" />
               <YAxis />
               <Tooltip />
-              <Bar dataKey="count" fill="#3B82F6" />
+              <Bar dataKey="count" fill="#3B82F6" onClick={(e) => setSelectedSector(e.sector)} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -74,6 +83,33 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
           </ResponsiveContainer>
         </div>
       </Card>
+
+      {selectedSector !== null && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Iglesias en Sector {selectedSector}</h3>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-200">
+              <thead>
+                <tr>
+                  <th className="border px-4 py-2">Iglesia</th>
+                  <th className="border px-4 py-2">Cantidad</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(churchSectorData[selectedSector] || {}).map(([church, count]) => (
+                  <tr key={church}>
+                    <td className="border px-4 py-2">{church}</td>
+                    <td className="border px-4 py-2 text-center">{count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <button className="mt-4 px-4 py-2 bg-red-500 text-white rounded" onClick={() => setSelectedSector(null)}>
+            Cerrar
+          </button>
+        </Card>
+      )}
     </>
   );
 };
