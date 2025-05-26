@@ -15,21 +15,24 @@ export type Database = {
           created_at: string | null
           id: number
           name: string
-          sector: number
+          sector: string | number
+          district: string
         }
         Insert: {
           church: string
           created_at?: string | null
           id?: number
           name: string
-          sector: number | string
+          sector: string | number
+          district: string
         }
         Update: {
           church?: string
           created_at?: string | null
           id?: number
           name?: string
-          sector?: number
+          sector?: string | number
+          district?: string
         }
         Relationships: []
       }

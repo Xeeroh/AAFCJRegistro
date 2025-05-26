@@ -44,22 +44,17 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-8">
+    <div className="min-h-screen w-full flex flex-col bg-[#181f23]">
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard de Registros</h1>
-          <Button onClick={() => navigate("/register")}>
+          <h1 className="text-3xl font-extrabold text-emerald-400 tracking-widest uppercase drop-shadow-md">Dashboard de Registros</h1>
+          <Button className="bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-500 text-white font-bold px-6 py-2 rounded-lg shadow-lg uppercase tracking-wide">
             Nuevo Registro
           </Button>
         </div>
-        
         <DashboardStats data={registrations} />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <RegistrationCharts data={registrations} />
-        </div>
-        
         <RecentRegistrations data={registrations} />
+        <RegistrationCharts data={registrations} />
       </div>
     </div>
   );

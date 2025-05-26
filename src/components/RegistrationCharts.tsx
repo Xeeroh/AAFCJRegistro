@@ -5,8 +5,9 @@ import { BarChart, Bar, PieChart, Pie, XAxis, YAxis, CartesianGrid, Tooltip, Res
 interface Registration {
   id: number;
   name: string;
-  sector: number;
+  sector: string | number;
   church: string;
+  district: string;
   created_at: string;
 }
 
@@ -15,101 +16,107 @@ interface RegistrationChartsProps {
 }
 
 export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
-  const [selectedSector, setSelectedSector] = useState<number | null>(null);
+  const [selectedView, setSelectedView] = useState<'sector' | 'district' | 'church'>('district');
 
+  // Datos para el gráfico de sectores
   const sectorData = Array.from(
     data.reduce((acc, curr) => {
-      acc.set(curr.sector, (acc.get(curr.sector) || 0) + 1);
+      const sector = curr.sector.toString();
+      acc.set(sector, (acc.get(sector) || 0) + 1);
       return acc;
-    }, new Map()),
-    ([sector, count]) => ({ sector, count })
+    }, new Map<string, number>()),
+    ([sector, count]) => ({ name: `Sector ${sector}`, value: count })
   );
 
+  // Datos para el gráfico de distritos
+  const districtData = Array.from(
+    data.reduce((acc, curr) => {
+      acc.set(curr.district, (acc.get(curr.district) || 0) + 1);
+      return acc;
+    }, new Map<string, number>()),
+    ([district, count]) => ({ name: district, value: count })
+  );
+
+  // Datos para el gráfico de iglesias
   const churchData = Array.from(
     data.reduce((acc, curr) => {
       acc.set(curr.church, (acc.get(curr.church) || 0) + 1);
       return acc;
-    }, new Map()),
-    ([name, value]) => ({ name, value })
+    }, new Map<string, number>()),
+    ([church, count]) => ({ name: church, value: count })
   );
 
-  const churchSectorData = data.reduce((acc, curr) => {
-    if (!acc[curr.sector]) {
-      acc[curr.sector] = {};
-    }
-    acc[curr.sector][curr.church] = (acc[curr.sector][curr.church] || 0) + 1;
-    return acc;
-  }, {} as Record<number, Record<string, number>>);
+  const COLORS = ["#34d399", "#06b6d4", "#fbbf24", "#f472b6", "#a78bfa", "#82CA9D"];
 
-  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+  const currentData = selectedView === 'sector' 
+    ? sectorData 
+    : selectedView === 'district' 
+      ? districtData 
+      : churchData;
 
   return (
-    <>
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Registros por Sector</h3>
-        <div className="h-[300px]">
+    <Card className="p-6 bg-[#232b32] border border-emerald-700/30 shadow-lg text-white w-full">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-semibold text-emerald-300">Estadísticas de Registros</h3>
+        <div className="flex gap-2">
+          <button
+            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'district' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            onClick={() => setSelectedView('district')}
+          >
+            Por Distrito
+          </button>
+          <button
+            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'sector' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            onClick={() => setSelectedView('sector')}
+          >
+            Por Sector
+          </button>
+          <button
+            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'church' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            onClick={() => setSelectedView('church')}
+          >
+            Por Iglesia
+          </button>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Gráfico de Barras */}
+        <div className="h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-4 w-full">
+          <h4 className="text-center mb-4 text-emerald-300">Registros por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={sectorData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="sector" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="count" fill="#3B82F6" onClick={(e) => setSelectedSector(e.sector)} />
+            <BarChart data={currentData}>
+              <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
+              <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} stroke="#a7f3d0" tick={{ fill: '#a7f3d0' }} />
+              <YAxis stroke="#a7f3d0" tick={{ fill: '#a7f3d0' }} />
+              <Tooltip contentStyle={{ background: '#232b32', border: '1px solid #34d399', color: '#fff' }} />
+              <Bar dataKey="value" fill="#34d399" />
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </Card>
-
-      <Card className="p-6">
-        <h3 className="text-lg font-semibold mb-4">Distribución por Iglesia</h3>
-        <div className="h-[300px]">
+        {/* Gráfico Circular */}
+        <div className="h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-4 w-full">
+          <h4 className="text-center mb-4 text-emerald-300">Distribución por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={churchData}
+                data={currentData}
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                outerRadius={100}
-                fill="#8884d8"
+                label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                outerRadius={150}
+                fill="#34d399"
                 dataKey="value"
               >
-                {churchData.map((entry, index) => (
+                {currentData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip />
+              <Tooltip contentStyle={{ background: '#232b32', border: '1px solid #34d399', color: '#fff' }} />
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </Card>
-
-      {selectedSector !== null && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Iglesias en Sector {selectedSector}</h3>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-200">
-              <thead>
-                <tr>
-                  <th className="border px-4 py-2">Iglesia</th>
-                  <th className="border px-4 py-2">Cantidad</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(churchSectorData[selectedSector] || {}).map(([church, count]) => (
-                  <tr key={church}>
-                    <td className="border px-4 py-2">{church}</td>
-                    <td className="border px-4 py-2 text-center">{count}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <button className="mt-4 px-4 py-2 bg-red-500 text-white rounded" onClick={() => setSelectedSector(null)}>
-            Cerrar
-          </button>
-        </Card>
-      )}
-    </>
+      </div>
+    </Card>
   );
 };
