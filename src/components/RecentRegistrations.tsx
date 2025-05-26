@@ -39,24 +39,27 @@ export const RecentRegistrations = ({ data }: RecentRegistrationsProps) => {
 
   return (
     <Card className="p-6 bg-[#232b32] border border-emerald-700/30 shadow-lg text-white">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
         <h3 className="text-lg font-semibold text-emerald-300">Registros Recientes</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <Button 
             variant={groupBy === 'church' ? "default" : "outline"}
-            className={`bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-bold ${groupBy === 'church' ? '' : 'bg-transparent border-emerald-500 text-emerald-300'}`}
+            className={`flex-1 sm:flex-none bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-bold ${groupBy === 'church' ? '' : 'bg-transparent border-emerald-500 text-emerald-300'}`}
             onClick={() => setGroupBy('church')}
           >
             Por Iglesia
           </Button>
           <Button 
             variant={groupBy === 'district' ? "default" : "outline"}
-            className={`bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-bold ${groupBy === 'district' ? '' : 'bg-transparent border-emerald-500 text-emerald-300'}`}
+            className={`flex-1 sm:flex-none bg-gradient-to-r from-emerald-500 to-cyan-500 text-white font-bold ${groupBy === 'district' ? '' : 'bg-transparent border-emerald-500 text-emerald-300'}`}
             onClick={() => setGroupBy('district')}
           >
             Por Distrito
           </Button>
-          <Button onClick={() => setGroupedView(!groupedView)} className="bg-[#232b32] border border-emerald-700/30 text-emerald-300 font-bold">
+          <Button 
+            onClick={() => setGroupedView(!groupedView)} 
+            className="flex-1 sm:flex-none bg-[#232b32] border border-emerald-700/30 text-emerald-300 font-bold"
+          >
             {groupedView ? "Ver Lista Completa" : "Ver Agrupado"}
           </Button>
         </div>

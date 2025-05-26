@@ -56,46 +56,54 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
 
   return (
     <Card className="p-6 bg-[#232b32] border border-emerald-700/30 shadow-lg text-white w-full">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <h3 className="text-lg font-semibold text-emerald-300">Estadísticas de Registros</h3>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2 w-full sm:w-auto">
           <button
-            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'district' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            className={`flex-1 sm:flex-none px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'district' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
             onClick={() => setSelectedView('district')}
           >
             Por Distrito
           </button>
           <button
-            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'sector' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            className={`flex-1 sm:flex-none px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'sector' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
             onClick={() => setSelectedView('sector')}
           >
             Por Sector
           </button>
           <button
-            className={`px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'church' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
+            className={`flex-1 sm:flex-none px-3 py-1 rounded font-bold uppercase tracking-wide transition-all duration-200 shadow-md ${selectedView === 'church' ? 'bg-gradient-to-r from-emerald-500 to-cyan-500 text-white' : 'bg-transparent border border-emerald-500 text-emerald-300'}`}
             onClick={() => setSelectedView('church')}
           >
             Por Iglesia
           </button>
         </div>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
         {/* Gráfico de Barras */}
-        <div className="h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-4 w-full">
-          <h4 className="text-center mb-4 text-emerald-300">Registros por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
+        <div className="h-[250px] sm:h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-2 sm:p-4 w-full overflow-x-auto">
+          <h4 className="text-center mb-2 sm:mb-4 text-emerald-300 text-sm sm:text-base">Registros por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={currentData}>
+            <BarChart data={currentData} margin={{ top: 5, right: 5, left: 5, bottom: 5 }}>
               <CartesianGrid stroke="#334155" strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} stroke="#a7f3d0" tick={{ fill: '#a7f3d0' }} />
-              <YAxis stroke="#a7f3d0" tick={{ fill: '#a7f3d0' }} />
+              <XAxis 
+                dataKey="name" 
+                angle={-45} 
+                textAnchor="end" 
+                height={80} 
+                stroke="#a7f3d0" 
+                tick={{ fill: '#a7f3d0', fontSize: 12 }} 
+                interval={0}
+              />
+              <YAxis stroke="#a7f3d0" tick={{ fill: '#a7f3d0', fontSize: 12 }} />
               <Tooltip contentStyle={{ background: '#232b32', border: '1px solid #34d399', color: '#fff' }} />
               <Bar dataKey="value" fill="#34d399" />
             </BarChart>
           </ResponsiveContainer>
         </div>
         {/* Gráfico Circular */}
-        <div className="h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-4 w-full">
-          <h4 className="text-center mb-4 text-emerald-300">Distribución por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
+        <div className="h-[250px] sm:h-[300px] lg:h-[400px] bg-[#232b32] rounded-xl p-2 sm:p-4 w-full">
+          <h4 className="text-center mb-2 sm:mb-4 text-emerald-300 text-sm sm:text-base">Distribución por {selectedView === 'district' ? 'Distrito' : selectedView === 'sector' ? 'Sector' : 'Iglesia'}</h4>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -104,7 +112,7 @@ export const RegistrationCharts = ({ data }: RegistrationChartsProps) => {
                 cy="50%"
                 labelLine={false}
                 label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                outerRadius={150}
+                outerRadius={window.innerWidth < 640 ? 80 : window.innerWidth < 1024 ? 100 : 150}
                 fill="#34d399"
                 dataKey="value"
               >
