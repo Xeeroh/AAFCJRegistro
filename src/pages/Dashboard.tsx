@@ -44,8 +44,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-[#181f23]">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen w-full flex flex-col bg-[#181f23] px-4">
+      <div className="max-w-7xl mx-auto space-y-8 py-8">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-extrabold text-emerald-400 tracking-widest uppercase drop-shadow-md">Dashboard de Registros</h1>
           <Button className="bg-gradient-to-r from-emerald-500 via-cyan-500 to-emerald-400 hover:from-cyan-400 hover:to-emerald-500 text-white font-bold px-6 py-2 rounded-lg shadow-lg uppercase tracking-wide">
